@@ -27,11 +27,12 @@ credito2$novo_emprestimos <- ifelse(credito2$emprestimos >= 1,1,0)
 
 table(credito2$novo_emprestimos)
 
-credito2$novo_emprestimos<-as.factor(credito2$novo_emprestimos)
+#credito2$novo_emprestimos<-as.factor(credito2$novo_emprestimos)
 table(credito2$novo_emprestimos)
-credito2$novo_emprestimos<-relevel(credito2$novo_emprestimos,ref = 1) 
+#credito2$novo_emprestimos<-relevel(credito2$novo_emprestimos,ref = 1) 
 
-futuro_emprestimos<-glm(credito2$novo_emprestimos ~ ., data = credito2,family = binomial)
+futuro_emprestimos<-glm(credito2$novo_emprestimos ~ idade+salario+sexo+estado_civil+n_filhos+n_cartoes+hipoteca+emprestimos, data = credito2,family = binomial)
 
 
-class(hipoteca)
+summary(futuro_emprestimos)
+exp(futuro_emprestimos$coefficients)
