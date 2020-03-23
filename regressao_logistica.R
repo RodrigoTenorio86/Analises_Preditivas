@@ -28,10 +28,10 @@ cor.test(Regressao_Linear_1_$work,Regressao_Linear_1_$salbeg)
 
 boxplot(Regressao_Linear_1_$salbeg)
 
-salario_futuro_func=lm(Regressao_Linear_1_$salbeg~Regressao_Linear_1_$edlevel,data = Regressao_Linear_1_)
+salario_futuro_func=lm(Regressao_Linear_1_$salbeg~edlevel+time+age+work+sex,data = Regressao_Linear_1_)
 salario_futuro_func
-#salario=b0+b1*tempo de estudos
-#salario=-2516+691*tempo
+#salario=b0+b1*edlevel+b2*time+b3*age+b4*work+b5*sex
+#salario=-2525.81+652.74*edlevel+(-22.48*time)+36.75*age+16.14*work+1567.93*sex
 #salario_futuro_func[[1]]+salario_futuro_func[[2]]*Regressao_Linear_1_$edlevel
 plot(Regressao_Linear_1_$edlevel,Regressao_Linear_1_$salbeg, main = "Diagrama da Reta")
 abline(salario_futuro_func,col="red")
