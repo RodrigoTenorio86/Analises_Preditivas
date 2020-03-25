@@ -1,11 +1,17 @@
+install.packages("car")
+library(car)
 library(readxl)
 Regressao_Linear_1_ <- read_excel("Downloads/Regressao_Linear.xlsx")
 View(Regressao_Linear_1_)
 
+
+#OBS: excluir variavel salnow
+Regressao_Linear_1_<-Regressao_Linear_1_[,-c(6)]
 attach(Regressao_Linear_1_)
 names(Regressao_Linear_1_)
-#OBS: excluir variavel salnow
+
 Regressao_Linear_1_$sex_males<-ifelse(Regressao_Linear_1_$sex=="Males",1,0)
+Regressao_Linear_1_<-Regressao_Linear_1_[,-c(3)]
 
 #Com base nesse arquivo, vamos criar um modelo de Regressão Linear para estimar o salário dos futuros empregados da empresa XBTO Ltda.
 
@@ -15,15 +21,15 @@ salario_futuro_func
 
 #Interpretacao dos coeficiente associado ao efeito das variaveis(edlevel, time, age, work e sexMales)
 #, no salário dos futuros empregados da empresa XBTO Ltda.
-#Considerado os dados e o modelo das variaveis(edlevel, time, age, work e sex) para construir estes modelos:
+#Considerado os dados e o modelo das variaveis(edlevel, time, age, work e sex) para construir estes modelos abaixo:
 
 #salario=b0+b1*edlevel+b2*time+b3*age+b4*work+b5*sex
 #salario=-2525.81+652.74*edlevel+(-22.48*time)+36.75*age+16.14*work+1567.93*sex
 #salario=salario_futuro_func[[1]]+salario_futuro_func[[2]]*Regressao_Linear_1_$edlevel+salario_futuro_func[[3]]*Regressao_Linear_1_$age+salario_futuro_func[[4]]*Regressao_Linear_1_$work+salario_futuro_func[[5]]*Regressao_Linear_1_$sexMales 
 
-#plot(Regressao_Linear_1_$edlevel,Regressao_Linear_1_$salbeg, main = "Diagrama da Reta")
-#abline(salario_futuro_func,col="red")
 summary(salario_futuro_func)
+
+#Obs:Com este modelo consigo explica 49% de variabilidade dos dados. 
 
 ##############################Regressão Linear#####################################################
 
@@ -43,6 +49,21 @@ cor(Regressao_Linear_1_$age,Regressao_Linear_1_$salbeg)
 cor(Regressao_Linear_1_$edlevel,Regressao_Linear_1_$salbeg)
 cor(Regressao_Linear_1_$work,Regressao_Linear_1_$salbeg)
 
+cor(Regressao_Linear_1_[2:7])
+
+#separacao do salario por sexo
+table(Regressao_Linear_1_$sex_males)
+homens_salarios <- Regressao_Linear_1_$salbeg[Regressao_Linear_1_$sex_males==1]
+#homens_salarios <- homens_salarios[1:216]
+mulheres_salarios<-Regressao_Linear_1_$salbeg[Regressao_Linear_1_$sex_males==0]
+
+mean(homens_salarios)-mean(mulheres_salarios)
+# esta media mostra que sao os homens que granhao mais de R$2883. do salario medio.
+mean(homens_salarios)
+mean(mulheres_salarios)
+t.test(homens_salarios ,mulheres_salarios)
+#com valor p-value < 2.2e-16 significa que media de salario entre homens e mulheres sao muito grandes.
+
 
 #2)   Faça uma correlação linear entre as variáveis:
 #  2.1 Qual a variável que possui a MAIOR  correlação com a variável dependente e, qual é  valor do  Interprete a correlação e o 
@@ -61,6 +82,12 @@ head(modelo)
 #qual o valor do  Justifique porquê as variáveis que entraram na equação é relevantes? 
 #Se alguma variável ficou fora da equação justifique sua resposta
 
+cor(Regressao_Linear_1_[2:7])
+# As variaveis mais relevantes para entrar na regressao linear múltipla sao edlevel e sex_males
+
+mod<-lm(salbeg ~ edlevel + sex_males,data = Regressao_Linear_1_)
+summary(mod)$r.squared
+# com este modelo consigo explicar 46% da variacao do modelo.
 
 #2.3 Interprete todos os parâmetros (Betas) da equação do modelo final.
 
@@ -70,7 +97,10 @@ head(modelo)
 #2.5 Faça uma análise dos resíduos (gráficos e normalidade do teste) do modelo final.
 
 #2.6 O modelo/ equação está adequada?
-
+salario_futuro_func=lm(Regressao_Linear_1_$salbeg~edlevel+time+age+work+sex_males,data = Regressao_Linear_1_)
+salario_futuro_func
+summary(salario_futuro_func)$r.squared
+# Com este modelo acima consigo explicar um 49% da variabilidade dos meus dados.
 
 #2.7 Faça um previsão de salário para um candidato masculino/ feminino. 
 #Precisar conter na formula todas as variáveis relevantes.
