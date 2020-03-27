@@ -1,6 +1,7 @@
 install.packages("car")
 library(car)
 library(readxl)
+library(faraway)
 Regressao_Linear_1_ <- read_excel("Downloads/Regressao_Linear.xlsx")
 View(Regressao_Linear_1_)
 
@@ -9,7 +10,7 @@ View(Regressao_Linear_1_)
 Regressao_Linear_1_<-Regressao_Linear_1_[,-c(6)]
 attach(Regressao_Linear_1_)
 names(Regressao_Linear_1_)
-
+#Definido que 0 e representam os sexo femenino e masculino, respectivamente.
 Regressao_Linear_1_$sex_males<-ifelse(Regressao_Linear_1_$sex=="Males",1,0)
 Regressao_Linear_1_<-Regressao_Linear_1_[,-c(3)]
 
@@ -35,8 +36,11 @@ summary(salario_futuro_func)
 
 #1.) Realizar uma análise exploratória de dados de todas as variáveis (estatísticas descritivas e gráficos) e,
 # Teste T para as variáveis salbeg x sexo (não esquecer o teste de leveve). Comentar todas as respostas.
-
-
+Sexo = factor(Regressao_Linear_1_$sex_males)
+par(mfrow=c(1,1))
+plot(Regressao_Linear_1_$work[Sexo==1],Regressao_Linear_1_$salbeg[Sexo==1],xlab="Experiência na função",ylab="Salário")
+points(Regressao_Linear_1_$work[Sexo==0],Regressao_Linear_1_$salbeg[Sexo==0], pch = 9)
+#Com este grafico de dispers'ao de Salario versus Experiencia 
 plot(Regressao_Linear_1_$sex_males,Regressao_Linear_1_$salbeg)
 plot(Regressao_Linear_1_$time,Regressao_Linear_1_$salbeg)
 plot(Regressao_Linear_1_$age,Regressao_Linear_1_$salbeg)
@@ -84,17 +88,30 @@ head(modelo)
 
 cor(Regressao_Linear_1_[2:7])
 # As variaveis mais relevantes para entrar na regressao linear múltipla sao edlevel e sex_males
+salario_futuro_func=lm(Regressao_Linear_1_$salbeg~edlevel+time+age+work+sex_males,data = Regressao_Linear_1_)
+salario_futuro_func
+summary(salario_futuro_func)$r.squared
+# Com este modelo acima consigo explicar um 49% da variabilidade dos meus dados.
 
-mod<-lm(salbeg ~ edlevel + sex_males,data = Regressao_Linear_1_)
-summary(mod)$r.squared
-# com este modelo consigo explicar 46% da variacao do modelo.
 
 #2.3 Interprete todos os parâmetros (Betas) da equação do modelo final.
 
 
 #2.4 Teste a multicolinearidade através da estatística VIF do modelo final.
+summary(salario_futuro_func)
+vif(salario_futuro_func)
+cbind(vif(salario_futuro_func))
+# Apos analise com a funcao vif e visto que nao existem valores maiores que 10 , logo nao existem presenca de multicolinearidade.
+
+#cook<-influence.measures(salario_futuro_func)
+#plot(lm(salario_futuro_func),which = 4)
+
 
 #2.5 Faça uma análise dos resíduos (gráficos e normalidade do teste) do modelo final.
+salario_futuro_func=lm(Regressao_Linear_1_$salbeg~edlevel+time+age+work+sex_males,data = Regressao_Linear_1_)
+salario_futuro_func
+
+
 
 #2.6 O modelo/ equação está adequada?
 salario_futuro_func=lm(Regressao_Linear_1_$salbeg~edlevel+time+age+work+sex_males,data = Regressao_Linear_1_)
@@ -104,7 +121,8 @@ summary(salario_futuro_func)$r.squared
 
 #2.7 Faça um previsão de salário para um candidato masculino/ feminino. 
 #Precisar conter na formula todas as variáveis relevantes.
-
+populacao_masc<-Regressao_Linear_1_[,c()]
+previsao_masculina<-predict(salario_futuro_func,)
 
 
 
