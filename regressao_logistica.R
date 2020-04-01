@@ -60,3 +60,27 @@ exp(futuro_emprestimos$coefficients)
 #A variavel probabilidade_novo_emprestimo, é a Probabilidade para tomada de novos emprestimos.
 credito2$probabilidade_novo_emprestimo= predict(futuro_emprestimos,type = "response", newdata = credito2)
 View(credito2)
+
+
+#1)Realizar uma análise de regressão logística para o arquivo crédito. 
+futuro_emprestimos<-glm(credito2$novo_emprestimos ~ idade+salario+n_filhos+n_cartoes+salario+risco_credito+hipoteca_existe+sexo+conjuge, data = credito2,family = binomial)
+
+#2)Interprete todos os betas da equação, relevantes.
+summary(futuro_emprestimos)
+
+
+#3)Quanto que o modelo está acertando na categoria alvo?
+probabilidade <-predict(futuro_emprestimos, credito2, type = "response")
+credito2$probabilidade <-probabilidade
+
+predito <- ifelse(probabilidade >= 0.5,1,0)
+predito
+
+credito2$predito <- predito 
+credito2
+
+
+#4)No geral, qual é o valor do erro do modelo?
+
+#5)Faça o gráfico da curva Roc.
+#6)Faça uma previsão para um proponente masculino/ feminino, nessa previsão / equação precisa conter as variáveis relevantes que entraram no modelo
