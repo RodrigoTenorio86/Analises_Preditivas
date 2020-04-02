@@ -1,11 +1,14 @@
+#Autor RTenorio
 install.packages("car")
 install.packages("nortest")
 library(nortest)
 library(car)
 library(readxl)
 library(faraway)
-Regressao_Linear_1_ <- read_excel("Downloads/Regressao_Linear.xlsx")
+#Regressao_Linear_1_ <- read_excel("Downloads/Regressao_Linear.xlsx")
+Regressao_Linear_1_ <- read_excel("C:/Users/creusaTenorio/Downloads/Regressao_Linear.xlsx")
 View(Regressao_Linear_1_)
+
 
 
 #OBS: excluir variavel salnow
@@ -53,7 +56,7 @@ cor(Regressao_Linear_1_$edlevel,Regressao_Linear_1_$salbeg)
 cor(Regressao_Linear_1_$work,Regressao_Linear_1_$salbeg)
 
 cor(Regressao_Linear_1_[2:7])
-
+#Neste teste mostra que existe um correlação muito forte com "edlevel" entre as variaveis tempo de estudo"edlevel" e sexo.
 #separacao do salario por sexo
 table(Regressao_Linear_1_$sex_males)
 homens_salarios <- Regressao_Linear_1_$salbeg[Regressao_Linear_1_$sex_males==1]
@@ -61,11 +64,21 @@ homens_salarios <- Regressao_Linear_1_$salbeg[Regressao_Linear_1_$sex_males==1]
 mulheres_salarios<-Regressao_Linear_1_$salbeg[Regressao_Linear_1_$sex_males==0]
 
 mean(homens_salarios)-mean(mulheres_salarios)
-# esta media mostra que sao os homens que granhao mais de 2883. do salario medio.
+# esta media mostra que sao os homens que granham mais de 2883. do salario medio.
 mean(homens_salarios)
 mean(mulheres_salarios)
 t.test(homens_salarios ,mulheres_salarios)
+t.test(Regressao_Linear_1_$salbeg ~ Regressao_Linear_1_$sex_males)
 #com Teste t e seu valor p-value < 2.2e-16 significa que media de salario entre homens e mulheres sao muito grandes.
+
+boxplot(Regressao_Linear_1_$salbeg~Regressao_Linear_1_$sex_males)
+boxplot(Regressao_Linear_1_$salbeg~Regressao_Linear_1_$sex_males, outline=FALSE)
+
+by(Regressao_Linear_1_$salbeg, Regressao_Linear_1_$sex_males, mean, na.rm=TRUE)
+
+leveneTest(salbeg ~ sex,center= mean,data = Regressao_Linear_1_)
+#Retorna o valor-p do teste de homogeneidade de variancias de Levene para uma hipotese nula de que as variancias sao homogenenas.
+#O valor-p deve ser superior a 5% para os grupos serem considerados homogêneos.
 
 
 #2)   Faça uma correlação linear entre as variáveis:
@@ -80,9 +93,10 @@ cor.test(Regressao_Linear_1_$work,Regressao_Linear_1_$salbeg)
 
 modelo <- Regressao_Linear_1_[,c("id","salbeg","time","age","edlevel","work")] 
 head(modelo)
+cor(Regressao_Linear_1_[2:7])
 
-# As variáveis que possuem as maiores correlação com salbeg sao edlevel e sex_males.
-#ambas variaveis sao positival e são estatisticamente significativas.
+# As variáveis que possuem as maiores correlações com salbeg sao edlevel e sex_males.
+#ambas variáveis são positivas e são estatisticamente significativas.
 
 
 #2.2 Realiza um regressão linear múltipla com todas as variáveis relevantes para a equação e, 
@@ -98,13 +112,15 @@ summary(salario_futuro_func)$r.squared
 
 
 #2.3 Interprete todos os parâmetros (Betas) da equação do modelo final.
-
+summary(salario_futuro_func)
+#Com este modelo acima consigo explicar um 49% da variabilidade dos meus dados
+#
 
 #2.4 Teste a multicolinearidade através da estatística VIF do modelo final.
 summary(salario_futuro_func)
 vif(salario_futuro_func)
 cbind(vif(salario_futuro_func))
-# Apos analise com a funcao vif e visto que nao existem valores maiores que 10, logo nao existem presenca de multicolinearidade.
+# Após análise com a função vif e visto que não existem valores maiores que 10, logo não existem presença de multicolinearidade.
 
 #cook<-influence.measures(salario_futuro_func)
 #plot(lm(salario_futuro_func),which = 4)
@@ -140,9 +156,9 @@ summary(salario_futuro_func)$r.squared
 #Precisar conter na formula todas as variáveis relevantes.
 
 #separacao por sexo
-populacao_masculina<-Regressao_Linear_1_[Regressao_Linear_1_$sex_males==0,]
+populacao_masculina<-Regressao_Linear_1_[Regressao_Linear_1_$sex_males==1,]
 View(populacao_masculina)
-populacao_feminino<-Regressao_Linear_1_[Regressao_Linear_1_$sex_males==1,]
+populacao_feminino<-Regressao_Linear_1_[Regressao_Linear_1_$sex_males==0,]
 View(populacao_feminino)
 #possivel problema com outliers
 salario_futuro_func_masc=lm(populacao_masculina$salbeg~edlevel+time+age+work,data = populacao_masculina)
